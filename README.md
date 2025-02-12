@@ -1,9 +1,9 @@
 # scraping-ts
 
-宝くじの過去当選番号をスクレイピングして output.csv へ出力する
+AmazonのKindle本のベストセラーをスクレイピングして output.csv へ出力する
 
-スクレイピングするサイトは楽天宝くじ
-https://takarakuji.rakuten.co.jp/backnumber/loto7/202301/
+スクレイピングするサイトはAmazonのKindle本のベストセラー
+https://www.amazon.co.jp/gp/bestsellers/digital-text/2275256051
 
 ```bash
 $ npm i puppeteer typescript ts-node
