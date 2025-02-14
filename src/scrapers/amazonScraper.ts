@@ -1,4 +1,5 @@
-import puppeteer from "puppeteer";
+import chromium from '@sparticuz/chromium';
+import puppeteer from "puppeteer-core";
 
 export interface Product {
 	formattedDate: string;
@@ -12,17 +13,24 @@ export interface Product {
 }
 
 export const scrapeAmazon = async (): Promise<Product[]> => {
-  const browser = await puppeteer.launch({
+  // 開発環境とVercel環境で異なる設定を使用
+  const options = process.env.AWS_LAMBDA_FUNCTION_VERSION ? {
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
     headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--disable-gpu',
-      '--window-size=1920x1080'
-    ]
-  });
+    ignoreHTTPSErrors: true
+  } : {
+    args: ['--no-sandbox'],
+    headless: true,
+    executablePath: process.platform === 'win32'
+      ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+      : process.platform === 'linux'
+      ? '/usr/bin/google-chrome'
+      : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  };
+
+  const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
 
   await page.goto("https://www.amazon.co.jp/gp/bestsellers/digital-text/2275256051", { waitUntil: "networkidle2" });
