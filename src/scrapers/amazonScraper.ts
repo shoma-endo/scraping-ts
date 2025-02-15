@@ -36,22 +36,22 @@ export const scrapeAmazon = async (): Promise<Product[]> => {
   await page.goto("https://www.amazon.co.jp/gp/bestsellers/digital-text/2275256051", { waitUntil: "networkidle2" });
 
   // ページの動的読み込みのために、末尾までスクロールする処理を追加
-  let previousHeight;
-  try {
-    while (true) {
-      previousHeight = await page.evaluate(() => document.body.scrollHeight);
-      // ページの一番下までスクロール
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      // 3秒間待機して新たなコンテンツの読み込みを待つ（必要に応じて調整）
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      const newHeight = await page.evaluate(() => document.body.scrollHeight);
-      // 高さが変わらなければ、全てのコンテンツが読み込まれたと判断
-      if (newHeight === previousHeight) break;
-    }
-    console.log('全てのコンテンツが読み込まれた可能性があります。');
-  } catch (err) {
-    console.error('スクロール処理中にエラー:', err);
-  }
+  // let previousHeight;
+  // try {
+  //   while (true) {
+  //     previousHeight = await page.evaluate(() => document.body.scrollHeight);
+  //     // ページの一番下までスクロール
+  //     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  //     // 3秒間待機して新たなコンテンツの読み込みを待つ（必要に応じて調整）
+  //     await new Promise(resolve => setTimeout(resolve, 3000));
+  //     const newHeight = await page.evaluate(() => document.body.scrollHeight);
+  //     // 高さが変わらなければ、全てのコンテンツが読み込まれたと判断
+  //     if (newHeight === previousHeight) break;
+  //   }
+  //   console.log('全てのコンテンツが読み込まれた可能性があります。');
+  // } catch (err) {
+  //   console.error('スクロール処理中にエラー:', err);
+  // }
 
   const products: Product[] = await page.$$eval('div[id^="p13n-asin-index-"]', (elements) => {
     return Array.from(elements).map((el) => {
